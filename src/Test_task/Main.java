@@ -1,6 +1,7 @@
 package Test_task;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -24,26 +25,26 @@ public class Main {
 
     }
 
-    public static int check(String operator, String firstNumber, String secondNumber) throws Exception {
+    public static String check(String operator, String firstNumber, String secondNumber) throws Exception {
 
         String ar = "[1-9]|10";
         boolean arab = (firstNumber.matches(ar)) && (secondNumber.matches(ar));
 
         String s = "I{1,3}+|IV|VI{0,3}|IX|X";
 
-        boolean numberRome = (firstNumber.matches(s)) && (secondNumber.matches(s));
+        boolean numberRoman = (firstNumber.matches(s)) && (secondNumber.matches(s));
 
-        if (!operator.matches("[+\\-*/]") || !(arab || numberRome)) {
+        if (!operator.matches("[+\\-*/]") || !(arab || numberRoman)) {
             throw new Exception("Error expression!");
         }
         if (arab) {
-            return arabNumber(Integer.parseInt(firstNumber),
-                    Integer.parseInt(secondNumber), operator.charAt(0));
+            return String.valueOf(arabNumber(Integer.parseInt(firstNumber),
+                    Integer.parseInt(secondNumber), operator.charAt(0)));
         }
-        if (numberRome) {
+        if (numberRoman) {
             return numbersOfRome((firstNumber), (secondNumber), operator.charAt(0));
         }
-        return 0;
+        return null;
     }
 
 
@@ -68,7 +69,7 @@ public class Main {
         }
     }
 
-    public static int numbersOfRome(String a, String b, char c) throws Exception {
+    public static String numbersOfRome(String a, String b, char c) throws Exception {
         String[] romeNum = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"};
         Map<String, Integer> romeNumWithArab = new HashMap<>();
         for (int i = 0; i < 10; i++) {
@@ -77,7 +78,15 @@ public class Main {
         if (romeNumWithArab.get(a) <= romeNumWithArab.get(b) && (c == '-')) {
             throw new Exception("Wrong numbers");
         }
+        int arabForRoman = arabNumber(romeNumWithArab.get(a), romeNumWithArab.get(b), c);
 
-        return arabNumber(romeNumWithArab.get(a), romeNumWithArab.get(b), c);
+        return intToRoman(arabForRoman);
     }
+
+    public static String intToRoman(int num) {
+        return List.of("", "C").get(num / 100 % 10) +
+                List.of("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC").get(num / 10 % 10) +
+                List.of("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX").get(num % 10);
+    }
+
 }
